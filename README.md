@@ -1,7 +1,7 @@
 # Mouse tracker template
 ------------------------
 
-This is a template for a mouse tracker experiment. It runs on a minimal set of images randomly selected from MS COCO. The mouse tracker tasj is inspired by the work from Koenig-Robert et al 2023.
+This is a template for a mouse tracker experiment. It runs on a minimal set of images randomly selected from MS COCO. The mouse tracker task is inspired by the work from Koenig-Robert et al 2023.
 
 Fill this template with your own experimental parameters to use it. Use the following sections as a guide.
 
