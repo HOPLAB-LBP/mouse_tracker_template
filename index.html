@@ -34,11 +34,13 @@
     <script src="stimuli.js"></script> 
     <script src="demographics/demographics.js"></script>
     <script src="instructions/instructions.js"></script>
+    <script src="informed_consent/informed_consent.js"></script>
     
     <!-- Refer to the stylesheets -->
     <link rel="stylesheet" href="https://unpkg.com/jspsych@7.1.2/css/jspsych.css" />
     <link rel="stylesheet" href="https://unpkg.com/@jspsych/plugin-survey@0.2.1/css/survey.css">
     <link rel="stylesheet" href="buttons/button_styles.css">
+    <link rel="stylesheet" href="informed_consent/informed_consent.css">
 
 
     <style>
@@ -57,10 +59,10 @@
 ////////////////////////////////////////////////////////////////////////////// PREAMBLE
 
     // SET SOME GLOBAL VARIABLES
-    let exp_online = false; // experiment online or not?
+    let exp_online = true; // experiment online or not?
     var exp_fullscreen = true; // experiment in full screen or not? 0 = window, 1 = full screen
     let ask_informed_consent = true; // ask for informed consent or not
-    let ask_demographics = false; // ask for demographics info or not
+    let ask_demographics = true; // ask for demographics info or not
     let exp_instructions = true; // play instructions or not
     let exp_training = true; // play training trials or not
 
@@ -166,12 +168,20 @@
 
 ////////////////////////////////////////////////////////////////////////////// INFORMED CONSENT FORM
     if (ask_informed_consent === true) { // if you want an informed consent
-        // if ask consent is set to true
         var informed_consent = {
-            type: jsPsychExternalHtml,
-            url: 'informed consent/informed_consent.html',
-            cont_btn: 'accept_consent_button'
-        }
+            type: jsPsychInstructions,
+            pages: [
+                INFORMED_CONSENT.Informed_consent()
+            ],
+            button_label_next: "Accept informed consent",
+            show_clickable_nav: true,
+            allow_backward: false,
+            key_forward: ' ',
+            data: {
+                event: 'informed_consent'
+            }
+        };
+        timeline.push(informed_consent);
     }
 ///////////////////////////////////////////////////
 

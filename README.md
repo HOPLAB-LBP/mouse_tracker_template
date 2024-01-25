@@ -16,19 +16,20 @@ Fill this template with your own experimental parameters to use it. Use the foll
 │   └── _your data will arrive here_
 ├── demographics
 │   └── demographics.js
-├── **index.html**
+├── index.html
 ├── informed_consent
 │   ├── KULeuvenlogo.png
-│   └── informed_consent.html
+│   ├── informed_consent.css
+│   └── informed_consent.js
 ├── instructions
 │   └── instructions.js
 ├── jspsych-7-pavlovia-2021.12.js
 ├── list_stimuli.py
 ├── stimuli
-│   └── _your main task stimuli here_
+│   └── your main task stimuli here
 ├── stimuli.js
 └── training_stimuli
-    └── _your training stimuli here_
+    └── your training stimuli here
 ```
 
 ### Stimuli
@@ -62,7 +63,7 @@ You can create this external `.js` file as you please. One way to go about it is
 - `buttons` contains a css script to control the appearance of the buttons to press during the mouse tracking task.
 - `data` is where your data will be saved (Pavlovia will drop it there automatically).
 - `demographics` contains an external `.js` file with the content of the quick demographics survey to appear at the start of the experiment.
-- `informed consent` contains an external `.html` file with the content of the informed consent participants will accept at the start of the experiment.
+- `informed consent` contains an external `.js` file with the content of the informed consent participants will accept at the start of the experiment, alongside a `.css` file to determine some visual features of the consent form.
 - `instructions` contains an external `.js` file contains instructions to be displayed at different moments of the experiment, and serves to de-clutter the main script.
 - `stimuli` and `training_stimuli` contain the example stimuli used in the template.
 
@@ -99,7 +100,7 @@ At the top of the script are some global parameters you will need to change in o
 - `debugging_length` is the number of trials that you reduce your training and main task to while in debugging mode.
 
 
-### Things to adapt
+#### Things to adapt
 
 Here are some extra things that you might want to adapt in your script.
 
