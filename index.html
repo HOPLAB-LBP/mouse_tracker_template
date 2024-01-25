@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Give a title to the experiment -->
+    <title>Mouse tracker experiment</title>
+
+    <!-- Refer to JsPsych -->
+    <script src="https://unpkg.com/jspsych@7.3.3"></script>
+
+    <!-- Refer to plugins -->
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-external-html@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-button-response@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.4"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-fullscreen@1.2.1"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey@0.2.1"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-canvas-button-response@1.1.3"></script>
+
+    <!-- Refer to pavlovia -->
+	<script type="text/javascript" src="jspsych-7-pavlovia-2021.12.js"></script>
+    <!-- <script type="text/javascript" src="lib/jspsych-7-pavlovia-2022.1.1.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- <script type="text/javascript" src="lib/vendors/jquery-2.2.0.min.js"></script> -->
+
+    
+    
+    <!-- Refer to extensions -->
+    <script src="https://unpkg.com/@jspsych/extension-mouse-tracking@1.0.0"></script>
+    
+    <!-- Refer to external files -->
+    <script src="stimuli.js"></script> 
+    <script src="demographics/demographics.js"></script>
+    <script src="instructions/instructions.js"></script>
+    
+    <!-- Refer to the stylesheets -->
+    <link rel="stylesheet" href="https://unpkg.com/jspsych@7.1.2/css/jspsych.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@jspsych/plugin-survey@0.2.1/css/survey.css">
+    <link rel="stylesheet" href="buttons/button_styles.css">
+
+
+    <style>
+        /* setting the background colour */
+        body {
+            background-color: rgb(255, 255, 255);
+        }
+    </style>
+
+</head>
+
+<body></body>
+
+<script>
+    
+////////////////////////////////////////////////////////////////////////////// PREAMBLE
+
+    // SET SOME GLOBAL VARIABLES
+    let exp_online = false; // experiment online or not?
+    var exp_fullscreen = true; // experiment in full screen or not? 0 = window, 1 = full screen
+    let ask_informed_consent = true; // ask for informed consent or not
+    let ask_demographics = false; // ask for demographics info or not
+    let exp_instructions = true; // play instructions or not
+    let exp_training = true; // play training trials or not
+
+    // EXPERIMENTAL SETTINGS
+    let button_labels = ['first_option', 'second_option'] // Important: create the labels of your buttons
+    let n_runs = 1; // number of times all the trial are shown. each run is divided in n_bocks.
+    let n_blocks = 2; // how many blocks a full run is divded in
+    let img_width = 500; // constrain the width and height of your images
+    // let img_height = 500; // constrain the width and height of your images
+    let trial_duration = 1000; // trial duration (ms) *in the main task*
+    let image_duration = 800; // how long images are presented for during the trial
+
+    // DEBUGGING MODE
+    let debugging_mode = true; // turn this on to make the experiment much shorter
+    let debugging_length = 4; // how many trials of training and main task are played in debug mode
+
+///////////////////////////////////////////////////
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// INITIALISE JSPSYCH
+
+    // initialise JsPsych
+    const jsPsych = initJsPsych({
+        default_iti: 0,
+        extensions: [
+          { type: jsPsychExtensionMouseTracking, params: {minimum_sample_time: 0} }
+        ],
+        data: {
+            event: 'initialise_JsPsych',
+            exp_id: "mouse_tracker",
+        }
+    });
+
+    // Start the experiment timeline
+    var timeline = [];
+
+    // Connect to Pavlovia if the experiment is online
+    if (exp_online == 1) {
+        var pavlovia_init = {
+            type: jsPsychPavlovia,
+            command: "init"
+        };
+        timeline.push(pavlovia_init);
+    }
+
+///////////////////////////////////////////////////
+    
+
+
+
+////////////////////////////////////////////////////////////////////////////// PRELOADING
+
+    // make a list of all the stimuli to preload
+    if (exp_training === 0) { // if there is no training
+        // add all the main task files
+        var filenames = stimuli.map(item => item.filename);
+    } else if (exp_training === 1) { // if there is training
+        var main_filenames = stimuli.map(item => item.filename);
+        var train_filenames = training_stimuli.map(item => item.filename);
+        var filenames = main_filenames.concat(train_filenames);
+    }
+
+    // preload all the necessary stimuli
+    var preload = {
+            type: jsPsychPreload,
+            images: filenames,
+            message: "<p> Experiment loading, please wait.</p>",
+            data: {
+                event: 'preload'
+            }
+        };
+    timeline.push(preload)
+
+///////////////////////////////////////////////////
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// FULLSCREEN
+    if (exp_fullscreen) { // if fullscreen was chosen
+        var enter_fullscreen = {
+            type: jsPsychFullscreen,
+            fullscreen_mode: true,
+            message: `
+            <p> <b>Hello!</b> Welcome to this experiment. </p>
+            <p> For more comfort, we will now enter <i>full screen mode</i>.</p>
+            <p> Please stay in full screen mode until the end of the experiment.</p>
+            <p> <b> Thank you!</b> Press the button below to begin.</p>
+            `,
+            button_label: 'Begin',
+            data: {
+                event: 'fullscreen'
+            }
+        };
+        timeline.push(enter_fullscreen);
+    }
+///////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////// INFORMED CONSENT FORM
+    if (ask_informed_consent === true) { // if you want an informed consent
+        // if ask consent is set to true
+        var informed_consent = {
+            type: jsPsychExternalHtml,
+            url: 'informed consent/informed_consent.html',
+            cont_btn: 'accept_consent_button'
+        }
+    }
+///////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////// DEMOGRAPHICS
+    if (ask_demographics) {    
+        let demographics_survey = {
+            type: jsPsychSurvey,
+            pages: [
+                [
+                    DEMOGRAPHICS.Introduction(),
+                    DEMOGRAPHICS.Age(),
+                    DEMOGRAPHICS.NativeLanguage(),
+                    DEMOGRAPHICS.Gender(),
+                    DEMOGRAPHICS.MouseType(),
+                    DEMOGRAPHICS.Handedness(),
+                    DEMOGRAPHICS.EMScode(),
+                ]
+            ],
+            button_label_finish: 'Done',
+            data: {
+                event: 'demographics_survey'
+            }
+        };
+        timeline.push(demographics_survey);
+    }
+///////////////////////////////////////////////////
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// INSTRUCTIONS
+
+    // Declare the instructions
+    var instructions = {
+        type: jsPsychInstructions,
+        pages: [
+            INSTRUCTIONS.Welcome(),
+            INSTRUCTIONS.First_page(),
+            INSTRUCTIONS.Second_page(),
+        ],
+        button_label_next: "Press space",
+        show_clickable_nav: true,
+        allow_backward: false,
+        key_forward: ' ',
+        data: {
+            event: 'instructions'
+        }
+    };
+    if (exp_instructions) {
+        timeline.push(instructions)
+    };
+
+///////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////// TRAINING
+
+
+    // declare the pre-training instructions
+    var pre_training_instructions = {
+        type: jsPsychInstructions,
+        pages: [
+            INSTRUCTIONS.Pre_training_instructions()
+        ],
+        button_label_next: "Press space",
+        show_clickable_nav: true,
+        allow_backward: false,
+        key_forward: ' ',
+        data: {
+            event: 'pre_training_instructions'
+        }
+    };
+
+    // start of the trial: box with fixation cross to press
+    // note that this event is re-used in the main task
+    var trial_start = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: '<div style="font-size:9px"></div>',
+        choices: ['+'],
+        response_ends_trial: true,
+        button_html: '<button id="trial_start_button" class"jspsych-btn" style="position:absolute; align-items: center; bottom: 270px; width:30px; font-size:25px;">%choice%</button>',
+        data: {
+            'event': 'trial_start',
+        }
+    };
+
+    // randomly long jitter in between trial start and image presentation
+    // note that this event is re-used in the main task
+    var jitter = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '',
+        choices: "NO_KEYS", //specifies that no keyboard answer will be accepted
+        trial_duration: function(){
+            return jsPsych.randomization.sampleWithoutReplacement([0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300], 1)[0];
+        },
+        data: {
+            event: 'jitter'
+        }
+    };
+
+    // actual mouse tracking training trial
+    var training_trial = {
+        type: jsPsychImageButtonResponse,
+        stimulus: jsPsych.timelineVariable('filename'),
+        // stimulus_height: img_height, // uncomment to fix the image height
+        stimulus_width: img_width,
+        choices: button_labels,
+        extensions: [
+            {type: jsPsychExtensionMouseTracking, params: {targets: ['#target']}}
+        ],
+        button_html: [
+            '<button id="training_trial_left_button" class="jspsych-response-btn">%choice%</button>',
+            '<button id="training_trial_right_button" class="jspsych-response-btn">%choice%</button>'
+        ],
+        // stimulus_duration: 800, // uncomment this to fix a duration, otherwise unlimited
+        data: {
+            event: 'training_trial',
+            filename: jsPsych.timelineVariable('filename'),
+        },
+        on_finish: function(data){
+            data.answer = button_labels[jsPsych.data.get().last(1).values()[0].response];
+            data.targets = button_labels; // save the trial targets
+            // fetch the screen dimensions
+            var screen_width = window.innerWidth;
+            var screen_height = window.innerHeight;
+            data.screen_width = screen_width;
+            data.screen_height = screen_height;
+            // Calculate the start button position relative to the screen
+            data.button_left = (screen_width - 30) / 2; // Adjust '30' according to your button width
+            data.button_bottom = screen_height - 270; // Adjust '270' according to your button height
+        }
+    };
+
+    if (debugging_mode) {
+        // If debugging_mode is true, use only two trials
+        training_procedure = {
+            timeline: [trial_start, jitter, training_trial],
+            repetitions: 1,
+            randomize_order: true,
+            timeline_variables: training_stimuli.slice(0, debugging_length)
+        };
+    } else {
+        // If debugging_mode is false, use all trials
+        training_procedure = {
+            timeline: [trial_start, jitter, training_trial],
+            repetitions: 1,
+            randomize_order: true,
+            timeline_variables: training_stimuli
+        };
+    }
+
+    var post_training_instructions = {
+        type: jsPsychInstructions,
+        pages: [
+            INSTRUCTIONS.Post_training_instructions(n_runs, n_blocks)
+        ],
+        button_label_next: "Press space",
+        show_clickable_nav: true,
+        allow_backward: false,
+        key_forward: ' ',
+        data: {
+            event: 'post_training_instructions'
+        }
+    };
+
+    if (exp_training) {
+        timeline.push(pre_training_instructions, training_procedure, post_training_instructions)
+    };
+
+///////////////////////////////////////////////////
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// MAIN TASK
+
+    // SET SOME GLOBAL VARIABLES
+    var trial_count = 0;
+    var block_count = 1; // counting the block number to append in the data
+    var run_count = 1; // counting the run count to change task in between
+    var count_correct_trial = 0; // counting correct trials to give feedback during breaks
+    if (debugging_mode) {
+        var block_length = Math.floor((stimuli.slice(0,debugging_length)).length/n_blocks) + 1; // decide how long each block is
+    } else {
+        var block_length = Math.floor(stimuli.length/n_blocks) + 1; // decide how long each block is
+    }
+
+
+    // SET SOME FUNCTIONS
+    // generate a random binary
+    var random_binary = Math.floor(Math.random() * 2);
+    // create a function to determine the left-right buttons based on the block number
+    var update_choices = function() {
+        if (block_count % 2 == random_binary) {
+            // even block numbers get one order
+            var choices = [button_labels[0], button_labels[1]]
+        } else {
+            // odd block numbers get another order
+            var choices = [button_labels[1], button_labels[0]]
+        };
+        return choices;
+    };
+    // define a function to get the position of the buttons on screen
+    var get_boundingRec = function() {
+        var buttonElement = document.querySelector('#trial_start_button'); // fetch the trial start button by its id
+        var buttonRect = buttonElement.getBoundingClientRect(); // get its bounding rectangle
+        return buttonRect.toJSON()
+    };
+
+
+    // Main task trial
+    var trial = {
+        type: jsPsychImageButtonResponse,
+        stimulus: jsPsych.timelineVariable('filename'),
+        // stimulus_height: img_height, // uncomment to fix the height
+        stimulus_width: img_width,
+        choices: update_choices(),
+        extensions: [
+        {type: jsPsychExtensionMouseTracking, params: {targets: ['#target']}}
+        ],
+        button_html: function() {
+            return (
+                ['<button id="training_trial_left_button" class="jspsych-response-btn">'+update_choices()[0]+'</button>',
+                '<button id="training_trial_right_button" class="jspsych-response-btn">'+update_choices()[1]+'</button>']
+                )
+            },
+            stimulus_duration: image_duration,
+            trial_duration: trial_duration, 
+            data: {
+                event: 'main_trial',
+                filename: jsPsych.timelineVariable('filename')
+            },
+            on_finish: function(data){ // adding block count and trial count info
+                data.answer = update_choices()[jsPsych.data.get().last(1).values()[0].response];
+                data.block_number = block_count;
+                data.trial_number = trial_count;
+                data.run_number = run_count;
+                data.targets = update_choices(); // save the trial targets
+                // fetch the screen dimensions
+                var screen_width = window.innerWidth;
+                var screen_height = window.innerHeight;
+                data.screen_width = screen_width;
+                data.screen_height = screen_height;
+                // Calculate the start button position relative to the screen
+                data.button_left = (screen_width - 30) / 2; // Adjust '30' according to your button width
+                data.button_bottom = screen_height - 270; // Adjust '270' according to your button height            
+                // update the trial count
+                trial_count+=1;
+            }
+        };
+        
+///////////////////////////////////////////////////
+
+    
+    
+////////////////////////////////////////////////////////////////////////////// BLOCK STRUCTURE
+        
+    // post block instructions is a break to be played at the end of each block
+    var post_block_instructions = {
+        type: jsPsychInstructions,
+        pages: [
+        function() {
+            if (debugging_mode) {
+                return (
+                    "<p> You have finished <b>" + trial_count + "</b> trials out of " + (stimuli.slice(0, debugging_length)).length + ".</p>" +
+                    "<p> In the next trials, the <b>" + update_choices()[0] + "</b> button will be on the <b>left</b> and the <br>" +
+                    "<b>" + update_choices()[1] + "</b> button will  be on the <b>right</b>, like this: </p>" +
+                    '<br><br> <button class"jspsych-btn" style="position:absolute; align-items: center; left: 550px; height: 70px; width: 180px; font-size:25px;">' + update_choices()[0] + '</button>' +
+                    '<button class"jspsych-btn" style="position:absolute; align-items: center; right: 550px; height: 70px; width: 180px; font-size:25px;">' + update_choices()[1] + '</button> <br>' +
+                    "<br><br>" +
+                    "<p>Take a break and press <b><i>space</i></b> when you're ready.</p>"
+                )
+            } else {
+                return (
+                    "<p> You have finished <b>" + trial_count + "</b> trials out of " + stimuli.length + ".</p>" +
+                    "<p> In the next trials, the <b>" + update_choices()[0] + "</b> button will be on the <b>left</b> and the <br>" +
+                    "<b>" + update_choices()[1] + "</b> button will  be on the <b>right</b>, like this: </p>" +
+                    '<br><br> <button class"jspsych-btn" style="position:absolute; align-items: center; left: 550px; height: 70px; width: 180px; font-size:25px;">' + update_choices()[0] + '</button>' +
+                    '<button class"jspsych-btn" style="position:absolute; align-items: center; right: 550px; height: 70px; width: 180px; font-size:25px;">' + update_choices()[1] + '</button> <br>' +
+                    "<br><br>" +
+                    "<p>Take a break and press <b><i>space</i></b> when you're ready.</p>"
+                )
+            }
+        }
+        ],
+        button_label_next: "Press space",
+        allow_backward: false,
+        show_clickable_nav: false,
+        key_forward: ' ',
+        data: {
+            event: 'break'
+        },
+        on_finish: function(data){ // adding block count and trial count info
+            data.block_number = block_count;
+            data.trial_number = trial_count;
+            data.run_number = run_count;
+        },
+    };
+
+    // break_conditional is a timeline variable that plays the post block break only if at the end of a block
+    // and only if not at the end of the run
+    var break_conditional = {
+        timeline: [post_block_instructions],
+        conditional_function: function() {
+            // if we've reached the end of the block & if we're not at the end of the run
+            if (trial_count % block_length == 0 && trial_count != stimuli.length) {
+                // update the block count
+                block_count +=1;
+                // return true = play the timeline (i.e. the break)
+                return true;
+            } else {
+                // otherwise skip the break trial
+                return false;
+            }
+        }
+    };
+
+    // If debugging mode is one, only select the first 4 trials
+    if (debugging_mode) {
+        var block_loop = {
+            timeline: [
+                trial_start, // fixation cross to press
+                jitter, // random jitter
+                trial, // main mouse tracking trial
+                break_conditional // end of block break
+            ],
+            repetitions: 1,
+            randomize_order: true,
+            timeline_variables: stimuli.slice(0,4),
+        };
+    } else { // otherwise use all the stimuli
+        var block_loop = {
+            timeline: [trial_start, jitter, trial, break_conditional],
+            repetitions: 1,
+            randomize_order: true,
+            timeline_variables: stimuli,
+        };
+    }
+///////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////// RUN STRUCTURE
+    
+    // Start the run by displaying a message with mention of the keys
+    var pre_run_instructions = {
+        type: jsPsychInstructions,
+        pages: [
+            INSTRUCTIONS.Pre_run_instructions(run_count, n_runs)
+        ],
+        button_label_next: "Press space",
+        allow_backward: false,
+        show_clickable_nav: false,
+        key_forward: ' ',
+        data: {
+            event: 'pre_run_instructions'
+        }
+    };
+    
+    // End the run by displaying another message
+    var post_run_instructions = {
+        type: jsPsychInstructions,
+        pages: [
+            INSTRUCTIONS.Post_run_instructions(run_count, n_runs)
+        ],
+        button_label_next: "Press space",
+        allow_backward: false,
+        show_clickable_nav: false,
+        key_forward: ' ',
+        data: {
+            event: 'post_run_instructions'
+        }
+    };
+
+    // Create a procedure for the runs, to repeat n_runs times
+    var run_procedure = {
+        timeline: [
+            pre_run_instructions, // give the pre-run instructions
+            block_loop, // run n_blocks blocks of trials
+            post_run_instructions // give the post_run instructions
+        ],
+        repetitions: n_runs, // repeat each task n_runs times
+        on_timeline_finish: function() { // at the end of each run
+            run_count += 1; // update the run count
+            trial_count = 0; // reset the trial count
+        },
+    };
+    timeline.push(run_procedure)
+
+///////////////////////////////////////////////////
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// END
+
+    if (exp_online) {
+        var pavlovia_finish = {
+            type: jsPsychPavlovia,
+            command: "finish",
+             participantId: function(){
+                return 'ems_' + jsPsych.data.get().values()[3].response.EMScode
+            },
+            completedCallback: function() {
+                alert('Thank you for taking part! You can now close this window.');
+                window.location.replace('https://www.google.com/');
+            },
+            on_finish: function(data){
+                data.timing = jsPsych.getTotalTime();
+            }
+        };
+        timeline.push(pavlovia_finish);
+    } else {
+        var end = {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: `
+            <p> Thank you for taking part!</p>
+            <p> You can now close this window.</p>`,
+            choices: "NO_KEYS",
+            on_finish: function(data){
+                data.timing = jsPsych.getTotalTime();
+            },
+            data: {
+                event: 'end of experiment'
+            }
+        };
+        timeline.push(end)
+    };
+
+///////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////// LAUNCH
+    jsPsych.run(timeline);
+    
+
+</script>
+
+</html>
+

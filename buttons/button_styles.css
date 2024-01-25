@@ -1,0 +1,38 @@
+/* 
+This file compiles the styles of all the buttons to use in the mouse tracker
+experiment.
+Modify them as needed
+*/
+
+.jspsych-response-btn {
+    position: absolute;
+    font-size: 25px;
+}
+
+#training_trial_left_button {
+    top: 270px;
+    left: 270px;
+    width: 180px;
+    height: 70px;
+}
+
+#training_trial_right_button {
+    top: 270px;
+    right: 270px;
+    width: 180px;
+    height: 70px;
+}
+
+#main_trial_left_button {
+    top: 270px;
+    left: 270px;
+    width: 180px;
+    height: 70px;
+}
+
+#main_trial_right_button {
+    top: 270px;
+    right: 270px;
+    width: 180px;
+    height: 70px;
+  }
