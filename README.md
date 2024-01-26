@@ -98,7 +98,7 @@ At the top of the script are some global parameters you will need to change in o
 - `trial_duration` is the duration of the _full trial_, starting from participants pressing the start cross and determining how long a response can be given.
 - `image_duration` is the duration of the image presentation on screen, starting from the beginning of the trial.
 
-*debugging mode*
+*Debugging mode*
 - `debugging_mode` can be set to true if you wish to drastically reduce the number of trials, both in the training and main task. That can be useful if you want to debug your task.
 - `debugging_length` is the number of trials that you reduce your training and main task to while in debugging mode.
 
@@ -116,4 +116,4 @@ Here are some extra things that you might want to adapt in your script.
 
 Koening-Robert et al 2023, implementation of the mouse tracker.
  - [Link to the paper](https://www.biorxiv.org/content/10.1101/2023.03.15.532848v1)
- - [Link to the repositository](https://osf.io/9g4rz/)
+ - [Link to the repository](https://osf.io/9g4rz/)
