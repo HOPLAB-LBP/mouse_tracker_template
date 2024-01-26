@@ -5,6 +5,9 @@ This is a template for a mouse tracker experiment. It runs on a minimal set of i
 
 Fill this template with your own experimental parameters to use it. Use the following sections as a guide.
 
+![](https://github.com/mouse_tracker_template/illustrations/example_trial.gif)
+
+
 ### Directory structure
 
 ```
@@ -72,7 +75,7 @@ The extra file *jspsych-7-pavlovia-2021.12.js* comes from this [gitlab repositor
 which faces consistent issues with terminating the pavlovia connection. It's a temporary solution.
 
 
-### Notes on the main script
+### Adapting your own experiment
 
 #### Parameters
 
@@ -100,12 +103,14 @@ At the top of the script are some global parameters you will need to change in o
 - `debugging_length` is the number of trials that you reduce your training and main task to while in debugging mode.
 
 
-#### Things to adapt
+#### Other things to adapt
 
 Here are some extra things that you might want to adapt in your script.
 
  - The *title of your experiment*: it will show up as the name of the tab opened in the participant's browser. Change it in the `<title>` section of your *index.html* script (line 6).
- - The *ID of your experiment*: optional parameter to record in the data associated with your `initJsPsych` trial. Give a unique, recognisable ID to easily identify the source of your data once you are playing with your result files (line 96).
+ - The *ID of your experiment*: optional parameter to record in the data associated with your `initJsPsych` trial. Give a unique, recognisable ID to easily identify the source of your data once you are playing with your result files (search for the `initJsPsych` variable).
+ - The **consent form** and **instructions** are left mostly empty and need to be completed.
+ - The **demographics** contains some usual questions, but you might want to add or remove some.
 
 ### Links
 
