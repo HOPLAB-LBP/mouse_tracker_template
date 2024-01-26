@@ -8,6 +8,7 @@ Fill this template with your own experimental parameters to use it. Use the foll
 <div style="text-align: center;">
 
 ![](https://github.com/TimManiquet/mouse_tracker_template/blob/main/illustrations/example_trial.gif)
+
 *Example mouse tracking trial.*
 
 </div>
