@@ -59,6 +59,8 @@ const INFORMED_CONSENT = {
 
             '<b>I have read and understood the above information and have received answers to all my questions regarding this study. By continuing, I agree to participate.</b>' +
             '<br>' +
+            '<b>You can take a screen shot of this page if you want to keep your own record of it. </b>' +
+            '<br>' +
             //'<button type="button" id="accept_consent_button">Accept informed consent</button>' +
             '<br><br>' +
             '</div>'
