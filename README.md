@@ -46,7 +46,7 @@ To have jsPsych read and use your files, you need to refer to them in your main 
 
 1. If you don't have a lot of images, it's probably the easiest to list them inside your `index.html`, like this:
 ```let stimuli = ['./stimuli/image1.png, './stimuli/image2.png', …]```
-1. In most cases, if you have a lot of images and/or if you want a cleaner script, your can make use of an external `.js` file. This is in use by default in this template. Such a file should contain a list of stimuli like this:
+2. In most cases, if you have a lot of images and/or if you want a cleaner script, your can make use of an external `.js` file. This is in use by default in this template. Such a file should contain a list of stimuli like this:
 ```
 var training_stimuli = [
   {

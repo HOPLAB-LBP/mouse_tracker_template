@@ -1,2 +1,6 @@
 create_js.py
 informed_consent/informed_consent_nl.html
+
+.DS_Store
+*/.DS_Store
+*/*/.DS_Store
