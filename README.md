@@ -1,4 +1,4 @@
-Forked from TimManiquet/mouse_tracker_template
+Forked from [TimManiquet/mouse_tracker_template](https://github.com/TimManiquet/mouse_tracker_template)
 
 # Mouse tracker template
 ------------------------
