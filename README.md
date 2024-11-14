@@ -1,7 +1,7 @@
 # Mouse tracker template
 ------------------------
 
-This is a template for a mouse tracker experiment. It runs on a minimal set of images randomly selected from MS COCO. The mouse tracker task is inspired by the work from Koenig-Robert et al 2023.
+This is a template for a mouse tracker experiment. It runs on a minimal set of images randomly selected from MS COCO. The mouse tracker task is inspired by the work from [Koenig-Robert et al 2024](https://www.nature.com/articles/s41598-024-62135-7).
 
 
 ![Example mouse tracking trial.](https://github.com/TimManiquet/mouse_tracker_template/blob/main/illustrations/example_trial.gif)
@@ -116,5 +116,5 @@ Here are some extra things that you might want to adapt in your script.
 ### Links
 
 Koening-Robert et al 2023, implementation of the mouse tracker.
- - [Link to the paper](https://www.biorxiv.org/content/10.1101/2023.03.15.532848v1)
+ - [Link to the paper](https://www.nature.com/articles/s41598-024-62135-7)
  - [Link to the repository](https://osf.io/9g4rz/)
