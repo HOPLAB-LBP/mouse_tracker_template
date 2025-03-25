@@ -103,7 +103,7 @@
     var timeline = [];
 
     // Connect to Pavlovia if the experiment is online
-    if (exp_online == 1) {
+    if (exp_online) {
         var pavlovia_init = {
             type: jsPsychPavlovia,
             command: "init"
@@ -130,13 +130,13 @@
 
     // preload all the necessary stimuli
     var preload = {
-            type: jsPsychPreload,
-            images: filenames,
-            message: "<p> Experiment loading, please wait.</p>",
-            data: {
-                event: 'preload'
-            }
-        };
+        type: jsPsychPreload,
+        images: filenames,
+        message: "<p> Experiment loading, please wait.</p>",
+        data: {
+            event: 'preload'
+        }
+    };
     timeline.push(preload)
 
 ///////////////////////////////////////////////////
@@ -587,7 +587,7 @@
             type: jsPsychPavlovia,
             command: "finish",
              participantId: function(){
-                return 'ems_' + jsPsych.data.get().values()[3].response.EMScode
+                return 'ems_' + jsPsych.data.get().filter({event: 'demographics_survey'}).values()[0].response.EMScode
             },
             completedCallback: function() {
                 alert('Thank you for taking part! You can now close this window.');
