@@ -117,6 +117,6 @@ Here are some extra things that you might want to adapt in your script.
 
 ### Links
 
-Koening-Robert et al 2023, implementation of the mouse tracker.
+Koening-Robert et al 2024, implementation of the mouse tracker.
  - [Link to the paper](https://www.nature.com/articles/s41598-024-62135-7)
  - [Link to the repository](https://osf.io/9g4rz/)
